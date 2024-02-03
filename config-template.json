@@ -15,6 +15,9 @@
   "group_chat_prefix": [
     "@bot"
   ],
+  "group_timing_group_map": {
+    "reply_fn_timing_zzy": "ChatGPT测试群"
+  },
   "group_name_white_list": [
     "ChatGPT测试群",
     "ChatGPT测试群2"

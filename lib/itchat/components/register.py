@@ -1,4 +1,8 @@
+import json
 import logging, traceback, sys, threading
+import schedule
+import time
+from config import conf
 try:
     import Queue
 except ImportError:
@@ -9,6 +13,8 @@ from ..utils import test_connect
 from ..storage import templates
 
 logger = logging.getLogger('itchat')
+
+group_id_zzy = ''
 
 def load_register(core):
     core.auto_login       = auto_login
@@ -98,9 +104,37 @@ def run(self, debug=False, blockThread=True):
             self.alive = False
             logger.debug('itchat received an ^C and exit.')
             logger.info('Bye~')
+    
+    def job_zzy_drink():
+        self.send_msg('@Zzy 肉肉喝水啦 ~ [定时发送]', group_id_zzy)
+
+    def job_zzy_flow_checking():
+        self.send_msg('@Zzy 肉肉查流程啦 ~ [定时发送]', group_id_zzy)
+    
+    def reply_fn_timing_zzy():
+        try:
+            for moment in ["10:00", "13:00", "15:00", "17:00"]:
+                schedule.every().day.at(moment).do(job_zzy_drink)
+            for moment in ["11:00", "14:00", "18:00"]:
+                schedule.every().day.at(moment).do(job_zzy_flow_checking)
+            while self.alive:
+                for chatroom in self.get_chatrooms():
+                    if chatroom.get('NickName') == conf().get('group_timing_group_map').get('reply_fn_timing_zzy'):
+                        global group_id_zzy
+                        group_id_zzy = chatroom.get('UserName')
+                        break
+                schedule.run_pending()
+                time.sleep(1)
+        except KeyboardInterrupt:
+            if self.useHotReload:
+                self.dump_login_status()
+            self.alive = False
+            logger.debug('itchat received an ^C and exit.')
+            logger.info('Bye~')
+
+    replyThread = threading.Thread(target=reply_fn_timing_zzy)
+    replyThread.setDaemon(True)
+    replyThread.start()
+
     if blockThread:
         reply_fn()
-    else:
-        replyThread = threading.Thread(target=reply_fn)
-        replyThread.setDaemon(True)
-        replyThread.start()
