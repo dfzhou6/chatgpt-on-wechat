@@ -56,21 +56,21 @@ def configured_reply(self):
     except Queue.Empty:
         pass
     else:
-        if isinstance(msg['User'], templates.User):
-            replyFn = self.functionDict['FriendChat'].get(msg['Type'])
-        elif isinstance(msg['User'], templates.MassivePlatform):
-            replyFn = self.functionDict['MpChat'].get(msg['Type'])
-        elif isinstance(msg['User'], templates.Chatroom):
-            replyFn = self.functionDict['GroupChat'].get(msg['Type'])
-        if replyFn is None:
-            r = None
-        else:
-            try:
+        try:
+            if isinstance(msg['User'], templates.User):
+                replyFn = self.functionDict['FriendChat'].get(msg['Type'])
+            elif isinstance(msg['User'], templates.MassivePlatform):
+                replyFn = self.functionDict['MpChat'].get(msg['Type'])
+            elif isinstance(msg['User'], templates.Chatroom):
+                replyFn = self.functionDict['GroupChat'].get(msg['Type'])
+            if replyFn is None:
+                r = None
+            else:
                 r = replyFn(msg)
                 if r is not None:
                     self.send(r, msg.get('FromUserName'))
-            except:
-                logger.warning(traceback.format_exc())
+        except:
+            logger.warning(traceback.format_exc())
 
 def msg_register(self, msgType, isFriendChat=False, isGroupChat=False, isMpChat=False):
     ''' a decorator constructor
