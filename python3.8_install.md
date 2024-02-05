@@ -19,6 +19,7 @@ sudo mkdir /usr/local/openssl
 
 sudo chmod -R 777 /usr/local/openssl
 
+## 如果make过程中出现错误，先执行sudo make clean，再从之前的./config步骤开始重新执行
 sudo make && make install
 
 ## 如果不行可直接通过vim修改文件/etc/profile
@@ -39,6 +40,7 @@ sudo mkdir /usr/local/python3
 
 sudo chmod -R 777 /usr/local/python3
 
+## 如果make过程中出现错误，先执行sudo make clean，再从之前的./configure步骤开始重新执行
 sudo make && make install
 
 ln -s /usr/local/python3/bin/python3.8 /usr/bin/python3
